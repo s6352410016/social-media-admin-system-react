@@ -1,0 +1,32 @@
+.container-sidebar-left{
+    width: 15vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: #1C2536;
+}
+
+.admin-dashboard{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding-left: 1rem;
+    cursor: pointer;
+    transition: .4s;
+    text-decoration: none;
+}
+
+.admin-dashboard span{
+    color: #ececec;
+    font-size: 18px;
+}
+
+.admin-dashboard.active{
+    background-color: rgb(99, 102, 241);
+}

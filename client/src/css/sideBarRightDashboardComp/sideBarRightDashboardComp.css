@@ -1,0 +1,89 @@
+.container-sidebar-right-dashboard-comp {
+    width: 85vw;
+    height: 100%;
+    background-color: #ebedef;
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.second-container-sidebar-right-dashboard-comp{
+    max-width: 100%;
+}
+
+.container-sidebar-right-dashboard-comp h2 {
+    color: #1C2536;
+}
+
+.container-main-sidebar-right-body {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    justify-items: center;
+    align-items: start;
+    grid-gap: 4rem;
+    margin-top: 2rem;
+}
+
+.container-sidebar-right-body {
+    width: 300px;
+    height: 150px;
+    background-color: antiquewhite;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.container-sidebar-right-body p {
+    font-size: 25px;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.container-sidebar-right-body span {
+    display: block;
+    width: auto;
+    height: 30px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    color: #fff;
+    font-size: 20px;
+}
+
+.container-sidebar-right-body.user {
+    background: linear-gradient(60deg, #ffa726, #fb8c00);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, .14), 0 7px 10px -5px rgba(255, 152, 0, .4);
+}
+
+.container-sidebar-right-body.post{
+    background: linear-gradient(60deg, #66bb6a, #43a047);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(76, 175, 80,.4);
+}
+
+.container-sidebar-right-body.comment{
+    background: linear-gradient(60deg, #ef5350, #e53935);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(244, 67, 54,.4);
+}
+
+.container-sidebar-right-body.reply{
+    background: linear-gradient(60deg, #26c6da, #00acc1);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(0, 172, 193,.4);
+}
+
+.container-sidebar-right-body.notification{
+    background: linear-gradient(60deg, #ab47bc, #8e24aa);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(156, 39, 176,.4);
+}
+
+.container-sidebar-right-body.chat{
+    background: linear-gradient(60deg, #ec407a, #d81b60);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(233, 30, 99,.4);
+}
+
+.container-sidebar-right-body.message{
+    box-shadow: 0 2px 2px 0 rgba(9, 118, 180, 0.14), 0 3px 1px -2px rgba(9, 118, 180, 0.2), 0 1px 5px 0 rgba(9, 118, 180, 0.12);
+    background-color: #0976b4;
+}

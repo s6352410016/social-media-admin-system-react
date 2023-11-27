@@ -1,0 +1,30 @@
+.conainer-sidebar-right-comment-comp {
+    width: 85vw;
+    height: 100%;
+    background-color: #ebedef;
+    padding: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.second-container-sidebar-right-comment-comp {
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.second-container-sidebar-right-comment-comp h2 {
+    color: #1C2536;
+    margin-bottom: 2rem;
+}
+
+.container-showall-posts {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}

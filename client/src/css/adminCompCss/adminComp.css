@@ -1,0 +1,96 @@
+.container-admin-login-comp{
+    width: 450px;
+    height: 410px;
+    border-radius: 5px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    background-color: #273246;
+}
+
+.login-header{
+    display: flex;
+    width: 100%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.login-header h1{
+    font-family: 'Kanit', sans-serif;
+    color: #ECECEC;
+    font-size: 2rem;
+}
+
+.form-login-admin-comp{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    gap: 2rem;
+}
+
+.login-body{
+    width: 100%;
+    height: 50px;
+    border: 2px solid #1C2536;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    background-color: #202939;
+}
+
+.login-icon{
+    width: 50px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-body input{
+    width: 100%;
+    height: 100%;
+    outline: none;
+    font-size: 1.1rem;
+    padding-left: 10px;
+}
+
+.login-remember{
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 7px;
+    color: #ECECEC;
+    font-size: 18px;
+}
+
+.login-btn{
+    width: 100%;
+    height: 50px;
+    background-color: rgb(99, 102, 241);
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ECECEC;
+}
+
+.checkbox-style{
+    cursor: pointer;
+}
+
+.checkbox-style:checked{
+    accent-color: rgb(99, 102, 241);
+}
