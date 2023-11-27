@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import SideBarRightUserComp from './components/SideBarRightUserComp';
@@ -13,7 +13,7 @@ import './css/style.css';
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
         <Route index element={<AdminLoginPage />}></Route>
         <Route path='dashboard' element={<AdminDashboardPage />}>
@@ -27,7 +27,7 @@ function App() {
           <Route path='message' element={<SideBarRightMessageComp />}></Route>
         </Route>
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 
