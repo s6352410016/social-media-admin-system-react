@@ -3,13 +3,14 @@ const path = require('path');
 const app = express();
 const PORT = 8000 || process.env.PORT;
 
-app.use(express.static(path.join(__dirname, "./client/build")));
-app.get("/*", (req, res) => {
-    res.sendFile(path.join(__dirname, "./client/build/index.html"), (err) => {
+app.use(express.static(path.join(__dirname, './client/build')));
+app.get('/*', (req, res, next) => {
+    res.sendFile(path.join(__dirname, './client/build/index.html'), (err) => {
         if (err) {
-            return res.status(500).json({ msg: err });
+            res.status(500).json(err);
         }
     });
+    next();
 });
 
 app.listen(PORT, () => {
