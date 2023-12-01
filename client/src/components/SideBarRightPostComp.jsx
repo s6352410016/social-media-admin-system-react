@@ -9,7 +9,8 @@ import '../css/sideBarRightPostComp/sideBarRightPostComp.css';
 const SideBarRightPostComp = () => {
   const [postData, setPostData] = useState([{}]);
   const [findPost, setFindPost] = useState("");
-  const [disableBtn , setDisableBtn] = useState(false);
+  const [disableBtn, setDisableBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   let runNumber = 1;
 
@@ -33,6 +34,7 @@ const SideBarRightPostComp = () => {
 
       const allPosts = [...posts, ...sharePosts];
       const sortedPost = allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setIsLoading(false);
       setPostData(sortedPost);
     } catch (err) {
       console.log(`error: ${err}`);
@@ -142,7 +144,7 @@ const SideBarRightPostComp = () => {
     if (!findPost.trim()) {
       setDisableBtn(true);
       getAllPosts();
-    }else{
+    } else {
       setDisableBtn(false);
     }
   }, [findPost]);
@@ -178,76 +180,77 @@ const SideBarRightPostComp = () => {
               </tr>
             </thead>
             <tbody>
-              {postData.length === 0 &&
+              {isLoading || postData.length === 0
+                ?
                 <tr>
                   <td colSpan={11} className='text-center'>ไม่พบข้อมูลโพสต์</td>
                 </tr>
-              }
-              {postData.map((post, index) => {
-                if (post.userIdToPost) {
-                  return (
-                    <tr key={index}>
-                      <td className='text-center'>{runNumber++}</td>
-                      <td className='text-center'>{post?._id}</td>
-                      <td className='text-center'>{post?.userIdToPost}</td>
-                      <td className='text-center'>{post?.postMsg === "" ? "ไม่มีข้อมูล" : post?.postMsg}</td>
-                      <td className='text-center'>
-                        <div className='d-flex flex-column gap-2'>
-                          {post?.postImgs?.length === 0
+                :
+                postData.map((post, index) => {
+                  if (post.userIdToPost) {
+                    return (
+                      <tr key={index}>
+                        <td className='text-center'>{runNumber++}</td>
+                        <td className='text-center'>{post?._id}</td>
+                        <td className='text-center'>{post?.userIdToPost}</td>
+                        <td className='text-center'>{post?.postMsg === "" ? "ไม่มีข้อมูล" : post?.postMsg}</td>
+                        <td className='text-center'>
+                          <div className='d-flex flex-column gap-2'>
+                            {post?.postImgs?.length === 0
+                              ?
+                              <span>ไม่มีข้อมูล</span>
+                              :
+                              post?.postImgs?.map((img, index) => (
+                                <a key={index} href={`${process.env.REACT_APP_SERVER_DOMAIN}/postImg/${img}`} target='_blank' rel='noreferrer'>{img}</a>
+                              ))
+                            }
+                          </div>
+                        </td>
+                        <td className='text-center'>
+                          {post?.postVideo === ""
                             ?
                             <span>ไม่มีข้อมูล</span>
                             :
-                            post?.postImgs?.map((img , index) => (
-                              <a key={index} href={`${process.env.REACT_APP_SERVER_DOMAIN}/postImg/${img}`} target='_blank' rel='noreferrer'>{img}</a>
-                            ))
+                            <a target='_blank' href={`${process.env.REACT_APP_SERVER_DOMAIN}/postVideo/${post?.postVideo}`} rel='noreferrer'>{post?.postVideo}</a>
                           }
-                        </div>
-                      </td>
-                      <td className='text-center'>
-                        {post?.postVideo === ""
-                          ?
-                          <span>ไม่มีข้อมูล</span>
-                          :
-                          <a target='_blank' href={`${process.env.REACT_APP_SERVER_DOMAIN}/postVideo/${post?.postVideo}`} rel='noreferrer'>{post?.postVideo}</a>
-                        }
-                      </td>
-                      <td className='text-center'>{post?.postLikes?.length === 0 ? "ไม่มี" : post?.postLikes?.length}</td>
-                      <td className='text-center'>{post?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                      <td className='text-center'>{post?.createdAt !== "" && new Date(post?.createdAt).toLocaleDateString("th")}</td>
-                      <td className='text-center'>{post?.updatedAt !== "" && new Date(post?.updatedAt).toLocaleDateString("th")}</td>
-                      <td className='text-center'>
-                        <div className="d-flex justify-content-center align-items-center gap-2">
-                          {post?._id && <Button onClick={() => handleBlockPost(post?._id, post?.isBlock)} variant={post?.isBlock ? "warning" : "danger"} >{post?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                } else {
-                  return (
-                    <tr key={index}>
-                      <td className='text-center'>{runNumber++}</td>
-                      <td className='text-center'>{post?._id}</td>
-                      <td className='text-center'>{post?.userIdToShare}</td>
-                      <td className='text-center'>{post?.shareMsg === "" ? "ไม่มีข้อมูล" : post?.shareMsg}</td>
-                      <td className='text-center'>
-                        ไม่มีข้อมูล
-                      </td>
-                      <td className='text-center'>
-                        ไม่มีข้อมูล
-                      </td>
-                      <td className='text-center'>{post?.sharePostLikes?.length === 0 ? "ไม่มี" : post?.sharePostLikes?.length}</td>
-                      <td className='text-center'>{post?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                      <td className='text-center'>{post?.createdAt !== "" && new Date(post?.createdAt).toLocaleDateString("th")}</td>
-                      <td className='text-center'>{post?.updatedAt !== "" && new Date(post?.updatedAt).toLocaleDateString("th")}</td>
-                      <td className='text-center'>
-                        <div className="d-flex justify-content-center align-items-center gap-2">
-                          {post?._id && <Button onClick={() => handleBlockPost(post?._id, post?.isBlock)} variant={post?.isBlock ? "warning" : "danger"} >{post?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                }
-              })
+                        </td>
+                        <td className='text-center'>{post?.postLikes?.length === 0 ? "ไม่มี" : post?.postLikes?.length}</td>
+                        <td className='text-center'>{post?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                        <td className='text-center'>{post?.createdAt !== "" && new Date(post?.createdAt).toLocaleDateString("th")}</td>
+                        <td className='text-center'>{post?.updatedAt !== "" && new Date(post?.updatedAt).toLocaleDateString("th")}</td>
+                        <td className='text-center'>
+                          <div className="d-flex justify-content-center align-items-center gap-2">
+                            {post?._id && <Button onClick={() => handleBlockPost(post?._id, post?.isBlock)} variant={post?.isBlock ? "warning" : "danger"} >{post?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  } else {
+                    return (
+                      <tr key={index}>
+                        <td className='text-center'>{runNumber++}</td>
+                        <td className='text-center'>{post?._id}</td>
+                        <td className='text-center'>{post?.userIdToShare}</td>
+                        <td className='text-center'>{post?.shareMsg === "" ? "ไม่มีข้อมูล" : post?.shareMsg}</td>
+                        <td className='text-center'>
+                          ไม่มีข้อมูล
+                        </td>
+                        <td className='text-center'>
+                          ไม่มีข้อมูล
+                        </td>
+                        <td className='text-center'>{post?.sharePostLikes?.length === 0 ? "ไม่มี" : post?.sharePostLikes?.length}</td>
+                        <td className='text-center'>{post?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                        <td className='text-center'>{post?.createdAt !== "" && new Date(post?.createdAt).toLocaleDateString("th")}</td>
+                        <td className='text-center'>{post?.updatedAt !== "" && new Date(post?.updatedAt).toLocaleDateString("th")}</td>
+                        <td className='text-center'>
+                          <div className="d-flex justify-content-center align-items-center gap-2">
+                            {post?._id && <Button onClick={() => handleBlockPost(post?._id, post?.isBlock)} variant={post?.isBlock ? "warning" : "danger"} >{post?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  }
+                })
               }
             </tbody>
           </Table>

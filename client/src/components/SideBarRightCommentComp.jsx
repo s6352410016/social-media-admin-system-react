@@ -10,6 +10,7 @@ const SideBarRightCommentComp = () => {
   const [commentData, setCommentData] = useState([{}]);
   const [findComment, setFindComment] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   let runNumber = 1;
 
@@ -23,6 +24,7 @@ const SideBarRightCommentComp = () => {
       });
       const comments = await res.json();
       const sortedComment = comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setIsLoading(false);
       setCommentData(sortedComment);
     } catch (err) {
       console.log(`error: ${err}`);
@@ -163,37 +165,38 @@ const SideBarRightCommentComp = () => {
               </tr>
             </thead>
             <tbody>
-              {commentData.length === 0 &&
+              {isLoading || commentData.length === 0
+                ?
                 <tr>
                   <td colSpan={11} className='text-center'>ไม่พบข้อมูลคอมเมนท์</td>
                 </tr>
-              }
-              {commentData.map((comment, index) => (
-                <tr key={index}>
-                  <td className='text-center'>{runNumber++}</td>
-                  <td className='text-center'>{comment?._id}</td>
-                  <td className='text-center'>{comment?.postIdToComment}</td>
-                  <td className='text-center'>{comment?.userIdToComment}</td>
-                  <td className='text-center'>{comment?.commentMsgs === "" ? "ไม่มีข้อมูล" : comment?.commentMsgs}</td>
-                  <td className='text-center'>
-                    {comment?.commentImg === ""
-                      ?
-                      <span>ไม่มีข้อมูล</span>
-                      :
-                      <a href={`${process.env.REACT_APP_SERVER_DOMAIN}/commentImg/${comment?.commentImg}`} target='_blank' rel='noreferrer'>{comment?.commentImg}</a>
-                    }
-                  </td>
-                  <td className='text-center'>{comment?.commentLikes?.length === 0 ? "ไม่มี" : comment?.commentLikes?.length}</td>
-                  <td className='text-center'>{comment?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                  <td className='text-center'>{comment?.createdAt !== "" && new Date(comment?.createdAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>{comment?.updatedAt !== "" && new Date(comment?.updatedAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>
-                    <div className="d-flex justify-content-center align-items-center gap-2">
-                      {comment?._id && <Button onClick={() => handleBlockComment(comment?._id, comment?.isBlock)} variant={comment?.isBlock ? "warning" : "danger"} >{comment?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                    </div>
-                  </td>
-                </tr>
-              ))
+                :
+                commentData.map((comment, index) => (
+                  <tr key={index}>
+                    <td className='text-center'>{runNumber++}</td>
+                    <td className='text-center'>{comment?._id}</td>
+                    <td className='text-center'>{comment?.postIdToComment}</td>
+                    <td className='text-center'>{comment?.userIdToComment}</td>
+                    <td className='text-center'>{comment?.commentMsgs === "" ? "ไม่มีข้อมูล" : comment?.commentMsgs}</td>
+                    <td className='text-center'>
+                      {comment?.commentImg === ""
+                        ?
+                        <span>ไม่มีข้อมูล</span>
+                        :
+                        <a href={`${process.env.REACT_APP_SERVER_DOMAIN}/commentImg/${comment?.commentImg}`} target='_blank' rel='noreferrer'>{comment?.commentImg}</a>
+                      }
+                    </td>
+                    <td className='text-center'>{comment?.commentLikes?.length === 0 ? "ไม่มี" : comment?.commentLikes?.length}</td>
+                    <td className='text-center'>{comment?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                    <td className='text-center'>{comment?.createdAt !== "" && new Date(comment?.createdAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>{comment?.updatedAt !== "" && new Date(comment?.updatedAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        {comment?._id && <Button onClick={() => handleBlockComment(comment?._id, comment?.isBlock)} variant={comment?.isBlock ? "warning" : "danger"} >{comment?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               }
             </tbody>
           </Table>

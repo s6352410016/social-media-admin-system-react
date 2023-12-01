@@ -10,6 +10,7 @@ const SideBarRightReplyComp = () => {
   const [replyData, setReplyData] = useState([{}]);
   const [findReply, setFindReply] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   let runNumber = 1;
 
@@ -23,6 +24,7 @@ const SideBarRightReplyComp = () => {
       });
       const replys = await res.json();
       const sortedReply = replys.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setIsLoading(false);
       setReplyData(sortedReply);
     } catch (err) {
       console.log(`error: ${err}`);
@@ -57,7 +59,7 @@ const SideBarRightReplyComp = () => {
     setFindReply(e.target.value);
   }
 
-  const handleBlockReply = async (replyId , replyStatus) => {
+  const handleBlockReply = async (replyId, replyStatus) => {
     try {
       if (replyStatus) {
         const { isConfirmed } = await Swal.fire({
@@ -168,38 +170,39 @@ const SideBarRightReplyComp = () => {
               </tr>
             </thead>
             <tbody>
-              {replyData.length === 0 &&
+              {isLoading || replyData.length === 0
+                ?
                 <tr>
                   <td colSpan={12} className='text-center'>ไม่พบข้อมูลตอบกลับ</td>
                 </tr>
-              }
-              {replyData.map((reply, index) => (
-                <tr key={index}>
-                  <td className='text-center'>{runNumber++}</td>
-                  <td className='text-center'>{reply?._id}</td>
-                  <td className='text-center'>{reply?.postIdToReply}</td>
-                  <td className='text-center'>{reply?.commentIdToReply}</td>
-                  <td className='text-center'>{reply?.userIdToReply}</td>
-                  <td className='text-center'>{reply?.replyMsg === "" ? "ไม่มีข้อมูล" : reply?.replyMsg}</td>
-                  <td className='text-center'>
-                    {reply?.replyImg === ""
-                      ?
-                      <span>ไม่มีข้อมูล</span>
-                      :
-                      <a href={`${process.env.REACT_APP_SERVER_DOMAIN}/replyImg/${reply?.replyImg}`} target='_blank' rel='noreferrer'>{reply?.replyImg}</a>
-                    }
-                  </td>
-                  <td className='text-center'>{reply?.replyLikes?.length === 0 ? "ไม่มี" : reply?.replyLikes?.length}</td>
-                  <td className='text-center'>{reply?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                  <td className='text-center'>{reply?.createdAt !== "" && new Date(reply?.createdAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>{reply?.updatedAt !== "" && new Date(reply?.updatedAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>
-                    <div className="d-flex justify-content-center align-items-center gap-2">
-                      {reply?._id && <Button onClick={() => handleBlockReply(reply?._id, reply?.isBlock)} variant={reply?.isBlock ? "warning" : "danger"} >{reply?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                    </div>
-                  </td>
-                </tr>
-              ))
+                :
+                replyData.map((reply, index) => (
+                  <tr key={index}>
+                    <td className='text-center'>{runNumber++}</td>
+                    <td className='text-center'>{reply?._id}</td>
+                    <td className='text-center'>{reply?.postIdToReply}</td>
+                    <td className='text-center'>{reply?.commentIdToReply}</td>
+                    <td className='text-center'>{reply?.userIdToReply}</td>
+                    <td className='text-center'>{reply?.replyMsg === "" ? "ไม่มีข้อมูล" : reply?.replyMsg}</td>
+                    <td className='text-center'>
+                      {reply?.replyImg === ""
+                        ?
+                        <span>ไม่มีข้อมูล</span>
+                        :
+                        <a href={`${process.env.REACT_APP_SERVER_DOMAIN}/replyImg/${reply?.replyImg}`} target='_blank' rel='noreferrer'>{reply?.replyImg}</a>
+                      }
+                    </td>
+                    <td className='text-center'>{reply?.replyLikes?.length === 0 ? "ไม่มี" : reply?.replyLikes?.length}</td>
+                    <td className='text-center'>{reply?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                    <td className='text-center'>{reply?.createdAt !== "" && new Date(reply?.createdAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>{reply?.updatedAt !== "" && new Date(reply?.updatedAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        {reply?._id && <Button onClick={() => handleBlockReply(reply?._id, reply?.isBlock)} variant={reply?.isBlock ? "warning" : "danger"} >{reply?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               }
             </tbody>
           </Table>

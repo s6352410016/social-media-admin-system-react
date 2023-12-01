@@ -10,6 +10,7 @@ const SideBarRightNotificationComp = () => {
   const [notificationData, setNotificationData] = useState([{}]);
   const [findNotification, setFindNotification] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   let runNumber = 1;
 
@@ -23,6 +24,7 @@ const SideBarRightNotificationComp = () => {
       });
       const notifications = await res.json();
       const sortedNotification = notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setIsLoading(false);
       setNotificationData(sortedNotification);
     } catch (err) {
       console.log(`error: ${err}`);
@@ -37,7 +39,7 @@ const SideBarRightNotificationComp = () => {
     const dataByNotificationId = notificationData.filter((noti) => noti?._id.toLowerCase().includes(findNotification.trim().toLowerCase()));
     const dataByUserIdRead = notificationData.filter((noti) => noti?.read?.includes(findNotification.trim().toLowerCase()));
     const dataByReceiverId = notificationData.filter((noti) => noti?.notificationOfReceiverId?.includes(findNotification.trim().toLowerCase()));
-
+    
     let combindPostArr = [];
 
     if (dataByReplyId.length !== 0) {
@@ -55,11 +57,14 @@ const SideBarRightNotificationComp = () => {
     if (dataByNotificationId.length !== 0) {
       combindPostArr.push(...dataByNotificationId);
     }
+    if (dataByUserIdRead.length !== 0 && dataByReceiverId.length !== 0) {
+      return combindPostArr.push(...dataByUserIdRead);
+    }
     if (dataByUserIdRead.length !== 0) {
-      combindPostArr.push(...dataByUserIdRead);
+      return combindPostArr.push(...dataByUserIdRead);
     }
     if (dataByReceiverId.length !== 0) {
-      combindPostArr.push(...dataByReceiverId);
+      return combindPostArr.push(...dataByReceiverId);
     }
 
     setNotificationData(combindPostArr);
@@ -181,54 +186,55 @@ const SideBarRightNotificationComp = () => {
               </tr>
             </thead>
             <tbody>
-              {notificationData.length === 0 &&
+              {isLoading || notificationData.length === 0
+                ?
                 <tr>
                   <td colSpan={13} className='text-center'>ไม่พบข้อมูลการแจ้งเตือน</td>
                 </tr>
-              }
-              {notificationData.map((noti, index) => (
-                <tr key={index}>
-                  <td className='text-center'>{runNumber++}</td>
-                  <td className='text-center'>{noti?._id}</td>
-                  <td className='text-center'>{noti?.notificationOfUserId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfUserId}</td>
-                  <td className='text-center'>{noti?.notificationOfPostId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfPostId}</td>
-                  <td className='text-center'>{noti?.notificationOfCommentId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfCommentId}</td>
-                  <td className='text-center'>{noti?.notificationOfReplyId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfReplyId}</td>
-                  <td className='text-center'>{noti?.notificationDetail}</td>
-                  <td className='text-center'>
-                    <div className='d-flex flex-column gap-2'>
-                      {noti?.read?.length === 0
-                        ?
-                        <span>ไม่มีข้อมูล</span>
-                        :
-                        noti?.read?.map((userId, index) => (
-                          <span key={index}>{userId}</span>
-                        ))
-                      }
-                    </div>
-                  </td>
-                  <td className='text-center'>
-                    <div className='d-flex flex-column gap-2'>
-                      {noti?.notificationOfReceiverId?.length === 0
-                        ?
-                        <span>ไม่มีข้อมูล</span>
-                        :
-                        noti?.notificationOfReceiverId?.map((userId, index) => (
-                          <span key={index}>{userId}</span>
-                        ))
-                      }
-                    </div>
-                  </td>
-                  <td className='text-center'>{noti?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                  <td className='text-center'>{noti?.createdAt !== "" && new Date(noti?.createdAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>{noti?.updatedAt !== "" && new Date(noti?.updatedAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>
-                    <div className="d-flex justify-content-center align-items-center gap-2">
-                      {noti?._id && <Button onClick={() => handleBlockNotification(noti?._id, noti?.isBlock)} variant={noti?.isBlock ? "warning" : "danger"} >{noti?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                    </div>
-                  </td>
-                </tr>
-              ))
+                :
+                notificationData.map((noti, index) => (
+                  <tr key={index}>
+                    <td className='text-center'>{runNumber++}</td>
+                    <td className='text-center'>{noti?._id}</td>
+                    <td className='text-center'>{noti?.notificationOfUserId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfUserId}</td>
+                    <td className='text-center'>{noti?.notificationOfPostId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfPostId}</td>
+                    <td className='text-center'>{noti?.notificationOfCommentId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfCommentId}</td>
+                    <td className='text-center'>{noti?.notificationOfReplyId === "" ? "ไม่มีข้อมูล" : noti?.notificationOfReplyId}</td>
+                    <td className='text-center'>{noti?.notificationDetail}</td>
+                    <td className='text-center'>
+                      <div className='d-flex flex-column gap-2'>
+                        {noti?.read?.length === 0
+                          ?
+                          <span>ไม่มีข้อมูล</span>
+                          :
+                          noti?.read?.map((userId, index) => (
+                            <span key={index}>{userId}</span>
+                          ))
+                        }
+                      </div>
+                    </td>
+                    <td className='text-center'>
+                      <div className='d-flex flex-column gap-2'>
+                        {noti?.notificationOfReceiverId?.length === 0
+                          ?
+                          <span>ไม่มีข้อมูล</span>
+                          :
+                          noti?.notificationOfReceiverId?.map((userId, index) => (
+                            <span key={index}>{userId}</span>
+                          ))
+                        }
+                      </div>
+                    </td>
+                    <td className='text-center'>{noti?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                    <td className='text-center'>{noti?.createdAt !== "" && new Date(noti?.createdAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>{noti?.updatedAt !== "" && new Date(noti?.updatedAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        {noti?._id && <Button onClick={() => handleBlockNotification(noti?._id, noti?.isBlock)} variant={noti?.isBlock ? "warning" : "danger"} >{noti?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               }
             </tbody>
           </Table>

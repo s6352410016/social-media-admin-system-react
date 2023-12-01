@@ -10,6 +10,7 @@ const SideBarRightMessageComp = () => {
   const [msgData, setMsgData] = useState([{}]);
   const [findMsg, setFindMsg] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   let runNumber = 1;
 
@@ -23,6 +24,7 @@ const SideBarRightMessageComp = () => {
       });
       const msgs = await res.json();
       const sortedMsg = msgs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setIsLoading(false);
       setMsgData(sortedMsg);
     } catch (err) {
       console.log(`error: ${err}`);
@@ -162,40 +164,41 @@ const SideBarRightMessageComp = () => {
               </tr>
             </thead>
             <tbody>
-              {msgData.length === 0 &&
+              {isLoading || msgData.length === 0
+                ?
                 <tr>
-                  <td colSpan={10} className='text-center'>ไม่พบข้อมูล</td>
+                  <td colSpan={10} className='text-center'>ไม่พบข้อมูลข้อความ</td>
                 </tr>
-              }
-              {msgData.map((msg, index) => (
-                <tr key={index}>
-                  <td className='text-center'>{runNumber++}</td>
-                  <td className='text-center'>{msg?._id}</td>
-                  <td className='text-center'>{msg?.chatId}</td>
-                  <td className='text-center'>{msg?.senderId}</td>
-                  <td className='text-center'>{msg?.chatMsg === "" ? "ไม่มีข้อมูล" : msg?.chatMsg}</td>
-                  <td className='text-center'>
-                    <div className='d-flex flex-column gap-2'>
-                      {msg?.chatImages?.length === 0
-                        ?
-                        <span>ไม่มีข้อมูล</span>
-                        :
-                        msg?.chatImages?.map((img, index) => (
-                          <a key={index} href={`${process.env.REACT_APP_SERVER_DOMAIN}/chatImg/${img}`} target='_blank' rel='noreferrer'>{img}</a>
-                        ))
-                      }
-                    </div>
-                  </td>
-                  <td className='text-center'>{msg?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                  <td className='text-center'>{msg?.createdAt !== "" && new Date(msg?.createdAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>{msg?.updatedAt !== "" && new Date(msg?.updatedAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>
-                    <div className="d-flex justify-content-center align-items-center gap-2">
-                      {msg?._id && <Button onClick={() => handleBlockMsg(msg?._id, msg?.isBlock)} variant={msg?.isBlock ? "warning" : "danger"} >{msg?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                    </div>
-                  </td>
-                </tr>
-              ))
+                :
+                msgData.map((msg, index) => (
+                  <tr key={index}>
+                    <td className='text-center'>{runNumber++}</td>
+                    <td className='text-center'>{msg?._id}</td>
+                    <td className='text-center'>{msg?.chatId}</td>
+                    <td className='text-center'>{msg?.senderId}</td>
+                    <td className='text-center'>{msg?.chatMsg === "" ? "ไม่มีข้อมูล" : msg?.chatMsg}</td>
+                    <td className='text-center'>
+                      <div className='d-flex flex-column gap-2'>
+                        {msg?.chatImages?.length === 0
+                          ?
+                          <span>ไม่มีข้อมูล</span>
+                          :
+                          msg?.chatImages?.map((img, index) => (
+                            <a key={index} href={`${process.env.REACT_APP_SERVER_DOMAIN}/chatImg/${img}`} target='_blank' rel='noreferrer'>{img}</a>
+                          ))
+                        }
+                      </div>
+                    </td>
+                    <td className='text-center'>{msg?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                    <td className='text-center'>{msg?.createdAt !== "" && new Date(msg?.createdAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>{msg?.updatedAt !== "" && new Date(msg?.updatedAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        {msg?._id && <Button onClick={() => handleBlockMsg(msg?._id, msg?.isBlock)} variant={msg?.isBlock ? "warning" : "danger"} >{msg?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               }
             </tbody>
           </Table>

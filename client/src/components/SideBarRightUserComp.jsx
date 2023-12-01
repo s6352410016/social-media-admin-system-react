@@ -20,6 +20,7 @@ const SideBarRightUserComp = () => {
   const [editEmailModel, setEditEmailModel] = useState("");
   const [editPasswordModal, setEditPasswordModal] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
+  const [isLoading , setIsLoading] = useState(true);
 
   let runNumber = 1;
 
@@ -33,6 +34,7 @@ const SideBarRightUserComp = () => {
       });
       const users = await res.json();
       const sortedUsers = users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setIsLoading(false);
       setUserData(sortedUsers);
     } catch (err) {
       console.log(`error: ${err}`);
@@ -224,36 +226,38 @@ const SideBarRightUserComp = () => {
               </tr>
             </thead>
             <tbody>
-              {userData.length === 0 &&
+              {isLoading || userData.length === 0
+                ?
                 <tr>
                   <td colSpan={13} className='text-center'>ไม่พบข้อมูลผู้ใช้งาน</td>
                 </tr>
+                :
+                userData.map((user) => (
+                  //userId !== user._id &&
+                  <tr key={runNumber}>
+                    <td className='text-center'>{runNumber++}</td>
+                    <td className='text-center'>{user?._id}</td>
+                    <td className='text-center'>
+                      <img style={{ width: "45px", height: "45px", borderRadius: "50%" }} alt='profileImg' src={`${process.env.REACT_APP_SERVER_DOMAIN}/userProfileImg/${!user?.profilePicture ? "profileImgDefault.jpg" : user?.profilePicture}`} />
+                    </td>
+                    <td className='text-center'>{user?.firstname}</td>
+                    <td className='text-center'>{user?.lastname}</td>
+                    <td className='text-center'>{user?.username}</td>
+                    <td className='text-center'>{user?.email}</td>
+                    <td className='text-center'>{user?.dateOfBirth !== "" ? new Date(user?.dateOfBirth).toLocaleDateString("th") : "ไม่มีข้อมูล"}</td>
+                    <td className='text-center'>{user?.isAdmin ? "แอดมิน" : "ผู้ใช้"}</td>
+                    <td className='text-center'>{user?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                    <td className='text-center'>{user?.createdAt !== "" && new Date(user?.createdAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>{user?.updatedAt !== "" && new Date(user?.updatedAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        {user?._id && <Button variant='primary' onClick={() => handleShow(user?._id)}>แก้ไข</Button>}
+                        {user?._id && <Button variant={user?.isBlock ? "warning" : "danger"} onClick={() => showDialogConfirmBlock(user?._id, user?.isBlock)}>{user?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               }
-              {userData.map((user) => (
-                //userId !== user._id &&
-                <tr key={runNumber}>
-                  <td className='text-center'>{runNumber++}</td>
-                  <td className='text-center'>{user?._id}</td>
-                  <td className='text-center'>
-                    <img style={{ width: "45px", height: "45px", borderRadius: "50%" }} alt='profileImg' src={`${process.env.REACT_APP_SERVER_DOMAIN}/userProfileImg/${!user?.profilePicture ? "profileImgDefault.jpg" : user?.profilePicture}`} />
-                  </td>
-                  <td className='text-center'>{user?.firstname}</td>
-                  <td className='text-center'>{user?.lastname}</td>
-                  <td className='text-center'>{user?.username}</td>
-                  <td className='text-center'>{user?.email}</td>
-                  <td className='text-center'>{user?.dateOfBirth !== "" ? new Date(user?.dateOfBirth).toLocaleDateString("th") : "ไม่มีข้อมูล"}</td>
-                  <td className='text-center'>{user?.isAdmin ? "แอดมิน" : "ผู้ใช้"}</td>
-                  <td className='text-center'>{user?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                  <td className='text-center'>{user?.createdAt !== "" && new Date(user?.createdAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>{user?.updatedAt !== "" && new Date(user?.updatedAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>
-                    <div className="d-flex justify-content-center align-items-center gap-2">
-                      {user?._id && <Button variant='primary' onClick={() => handleShow(user?._id)}>แก้ไข</Button>}
-                      {user?._id && <Button variant={user?.isBlock ? "warning" : "danger"} onClick={() => showDialogConfirmBlock(user?._id, user?.isBlock)}>{user?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                    </div>
-                  </td>
-                </tr>
-              ))}
             </tbody>
           </Table>
           <Modal show={show} onHide={handleClose}>

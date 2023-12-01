@@ -10,6 +10,7 @@ const SideBarRightChatComp = () => {
   const [chatData, setChatData] = useState([{}]);
   const [findChat, setFindChat] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   let runNumber = 1;
 
@@ -23,6 +24,7 @@ const SideBarRightChatComp = () => {
       });
       const chats = await res.json();
       const sortedChat = chats.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setIsLoading(false);
       setChatData(sortedChat);
     } catch (err) {
       console.log(`error: ${err}`);
@@ -155,33 +157,34 @@ const SideBarRightChatComp = () => {
               </tr>
             </thead>
             <tbody>
-              {chatData.length === 0 &&
+              {isLoading || chatData.length === 0
+                ?
                 <tr>
                   <td colSpan={7} className='text-center'>ไม่พบข้อมูลห้องแชท</td>
                 </tr>
-              }
-              {chatData.map((chat, index) => (
-                <tr key={index}>
-                  <td className='text-center'>{runNumber++}</td>
-                  <td className='text-center'>{chat?._id}</td>
-                  <td className='text-center'>
-                    <div className='d-flex flex-column gap-2'>
-                      {chat?.members?.map((member , index) => (
-                        <span key={index}>{member}</span>
-                      ))               
-                      }
-                    </div>
-                  </td>
-                  <td className='text-center'>{chat?.isBlock ? "บล็อค" : "ปกติ"}</td>
-                  <td className='text-center'>{chat?.createdAt !== "" && new Date(chat?.createdAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>{chat?.updatedAt !== "" && new Date(chat?.updatedAt).toLocaleDateString("th")}</td>
-                  <td className='text-center'>
-                    <div className="d-flex justify-content-center align-items-center gap-2">
-                      {chat?._id && <Button onClick={() => handleBlockNotification(chat?._id, chat?.isBlock)} variant={chat?.isBlock ? "warning" : "danger"} >{chat?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
-                    </div>
-                  </td>
-                </tr>
-              ))
+                :
+                chatData.map((chat, index) => (
+                  <tr key={index}>
+                    <td className='text-center'>{runNumber++}</td>
+                    <td className='text-center'>{chat?._id}</td>
+                    <td className='text-center'>
+                      <div className='d-flex flex-column gap-2'>
+                        {chat?.members?.map((member, index) => (
+                          <span key={index}>{member}</span>
+                        ))
+                        }
+                      </div>
+                    </td>
+                    <td className='text-center'>{chat?.isBlock ? "บล็อค" : "ปกติ"}</td>
+                    <td className='text-center'>{chat?.createdAt !== "" && new Date(chat?.createdAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>{chat?.updatedAt !== "" && new Date(chat?.updatedAt).toLocaleDateString("th")}</td>
+                    <td className='text-center'>
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        {chat?._id && <Button onClick={() => handleBlockNotification(chat?._id, chat?.isBlock)} variant={chat?.isBlock ? "warning" : "danger"} >{chat?.isBlock ? "ยกเลิก" : "บล็อค"}</Button>}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               }
             </tbody>
           </Table>
